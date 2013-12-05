@@ -15,8 +15,8 @@ function WebGL(canvasId) {
       var x = event.clientX,
           y = event.clientY,
           rect = event.target.getBoundingClientRect();
-      x = ((x - rect.left) - that.canvas.height / 2) / (that.canvas.height / 2);
-      y = (that.canvas.width / 2 - ( y - rect.top)) / (that.canvas.width / 2);
+      x = ((x - rect.left) - that.canvas.width / 2) / (that.canvas.width / 2);
+      y = (that.canvas.height/ 2 - ( y - rect.top)) / (that.canvas.height / 2);
       that.draw(x,y);
     };
   this.canvas = $canvas[0];
