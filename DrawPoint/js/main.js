@@ -1,4 +1,5 @@
-var VERTEX_SHADER = "attribute vec4 point_position;\n" +
+function WebGL(canvasId) {
+  var VERTEX_SHADER = "attribute vec4 point_position;\n" +
                     "attribute float point_size;\n" +
                     "void main() {\n" +
                     "gl_Position = point_position;\n" + 
@@ -6,41 +7,54 @@ var VERTEX_SHADER = "attribute vec4 point_position;\n" +
                     "}",
     FRAGMENT_SHADER = "void main() {\n" + 
                       "gl_FragColor = vec4(1.0,0.0,0.0,1.0);\n" +
-                      "}";
-function main() {
-  console.debug("main function");
-  var canvas,
-      webGLContext,
-      pointPosition,
-      pointSize;
-  canvas = $("#webgl_canvas")[0];
-  webGLContext = getWebGLContext(canvas,DEBUG);
-  if (!webGLContext) {
-    console.error("Could not get WebGL Context");
-    return;
+                      "}",
+    $canvas = $("#" + canvasId),
+    that = this,
+    canvasClick = function(event) {
+      event.preventDefault();
+      var x = event.clientX,
+          y = event.clientY,
+          rect = event.target.getBoundingClientRect();
+      x = ((x - rect.left) - that.canvas.height / 2) / (that.canvas.height / 2);
+      y = (that.canvas.width / 2 - ( y - rect.top)) / (that.canvas.width / 2);
+      that.draw(x,y);
+    };
+  this.canvas = $canvas[0];
+  this.gl = getWebGLContext(this.canvas,DEBUG);
+  this.pointPosition = -1;
+  this.pointSize = -1;
+  if (!this.gl) {
+    console.error("Could not get the WebGL context");
+    return undefined;
   }
-
-  if (!initShaders(webGLContext,VERTEX_SHADER,FRAGMENT_SHADER)) {
-    console.error("Error in initilizing the shaders");
-    return;
+  if (!initShaders(this.gl,VERTEX_SHADER,FRAGMENT_SHADER)) {
+    console.error("Could not initialize the shaders");
+    return  undefined;
   }
-
   try {
-    pointPosition = webGLContext.getAttribLocation(webGLContext.program,"point_position");
-    pointSize = webGLContext.getAttribLocation(webGLContext.program,"point_size");
+    this.pointPosition = this.gl.getAttribLocation(this.gl.program,"point_position");
+    this.pointSize = this.gl.getAttribLocation(this.gl.program,"point_size");
   } catch (e) {
-    console.error("Error when trying to get the attribute from the shader: " + e.toString());
+    console.error("Exception occured when tryng to get the attributes from GLSL");
+    return undefined;
   }
-  if (pointPosition < 0) {
-    console.error("Could not get the position of the point");
-    return;
-  }
-  // var position = new Float32Array([0.0,0.0,0.0,0.0]);
-  // webGLContext.vertexAttrib4f(pointPosition,position);
-  webGLContext.vertexAttrib3f(pointPosition,0.0,0.0,0.0,0.0);
-  webGLContext.vertexAttrib1f(pointSize,20.0);
-  webGLContext.clearColor(0.0,0.0,0.0,1.0);
-  webGLContext.clear(webGLContext.COLOR_BUFFER_BIT);
 
-  webGLContext.drawArrays(webGLContext.POINTS, 0, 1);
+  if (this.pointPosition < 0 || this.pointSize < 0 ) {
+    console.error("Wrong attribute was returned");
+    return undefined;
+  }
+  $canvas.mousedown(canvasClick);
+  $canvas.mousemove(canvasClick);
+  this.gl.clearColor(0.0,0.0,0.0,1.0);
+  this.draw = function(x, y) {
+    that.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    that.gl.vertexAttrib3f(that.pointPosition,x,y,0.0);
+    that.gl.vertexAttrib1f(that.pointSize,20.0);
+    that.gl.drawArrays(that.gl.POINTS,0,1);
+  }
+}
+
+function main() {
+  var webGL = new WebGL("webgl_canvas");
+  webGL.draw(0.0,0.0);
 }
