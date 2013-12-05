@@ -8,7 +8,7 @@ function WebGL(canvasId) {
     FRAGMENT_SHADER = "void main() {\n" + 
                       "gl_FragColor = vec4(1.0,0.0,0.0,1.0);\n" +
                       "}",
-    $canvas = $("#" + canvasId),
+    $canvas = $("#" + canvasId ),
     that = this,
     canvasClick = function(event) {
       event.preventDefault();
@@ -18,11 +18,24 @@ function WebGL(canvasId) {
       x = ((x - rect.left) - that.canvas.width / 2) / (that.canvas.width / 2);
       y = (that.canvas.height/ 2 - ( y - rect.top)) / (that.canvas.height / 2);
       that.draw(x,y);
+    },
+    startInterval = function () {
+      if (that.intervalPointer < 0 ) {
+        that.intervalPointer = setInterval(that.drawArray,TRAIL_INTERVAL);
+      }
+    },
+    stopInterval = function() {
+      if (that.intervalPointer >= 0) {
+        clearInterval(that.intervalPointer);
+        that.intervalPointer = -1;
+      }
     };
   this.canvas = $canvas[0];
   this.gl = getWebGLContext(this.canvas,DEBUG);
   this.pointPosition = -1;
   this.pointSize = -1;
+  this.intervalPointer = -1;
+  this.pointsArray = [];
   if (!this.gl) {
     console.error("Could not get the WebGL context");
     return undefined;
@@ -47,11 +60,27 @@ function WebGL(canvasId) {
   $canvas.mousemove(canvasClick);
   this.gl.clearColor(0.0,0.0,0.0,1.0);
   this.draw = function(x, y) {
-    that.gl.clear(this.gl.COLOR_BUFFER_BIT);
-    that.gl.vertexAttrib3f(that.pointPosition,x,y,0.0);
-    that.gl.vertexAttrib1f(that.pointSize,20.0);
-    that.gl.drawArrays(that.gl.POINTS,0,1);
-  }
+    that.pointsArray.push(x);
+    that.pointsArray.push(y);
+    startInterval();
+  };
+
+  this.drawArray = function() {
+    //To have mirroring put this value to be 1
+    var subtractor = 2;
+    that.gl.clear(that.gl.COLOR_BUFFER_BIT);
+    for (var i = that.pointsArray.length - 1; i >= 0; i -= subtractor) {
+      that.gl.vertexAttrib3f(that.pointPosition,that.pointsArray[i-1],that.pointsArray[i],0.0);
+      that.gl.vertexAttrib1f(that.pointSize,20.0);
+      that.gl.drawArrays(that.gl.POINTS,0,1);
+    }
+    that.pointsArray.splice(0,2);
+    if (that.pointsArray.length <= 0) {
+      stopInterval();
+    }
+  };
+
+
 }
 
 function main() {

@@ -1,1 +1,2 @@
-var DEBUG = true;
+var DEBUG = true,
+  TRAIL_INTERVAL = 50;
