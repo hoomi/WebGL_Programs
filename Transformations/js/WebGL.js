@@ -102,6 +102,45 @@ function WebGL(canvasId) {
     gl.enableVertexAttribArray(a_position);
     that.gl.drawArrays(that.gl.TRIANGLES,0,n);
   }
+
+    this.drawScaledTriangle = function(angleDegree) {
+    var vertices = new Float32Array([
+      0.0, 0.5,
+      -0.5,-0.5,
+      0.5,-0.5]),
+      n = 3,
+      VERTEX_SHADER = "attribute vec4 pointPosition;\n" + 
+                      "uniform mat4 u_scaledMatrix;\n" +
+                      "void main(){\n" +
+                      "gl_Position = u_scaledMatrix * pointPosition;\n" +
+                      "}\n",
+      FRAGMENT_SHADER =  "void main(){ \n" +
+                    "gl_FragColor = vec4(1.0,0.0,0.0,1.0);\n" +
+                    "}\n", 
+      a_position,
+      gl = that.gl,
+      sx = 1.0,
+      sy = 1.5,
+      sz = 1.0,
+      scaleMatrix = new Float32Array([
+        sx, 0.0, 0.0 , 0.0,
+        0.0, sy, 0.0, 0.0,
+        0.0, 0.0, sz, 0.0,
+        0.0, 0.0, 0.0, 1.0 
+        ]),
+      u_scaledMatrix;
+    initVertexBuffers(gl, vertices, VERTEX_SHADER, FRAGMENT_SHADER);
+    a_position = gl.getAttribLocation(gl.program,"pointPosition");
+    u_scaledMatrix =  gl.getUniformLocation(gl.program,"u_scaledMatrix");
+    if(a_position <  0 || u_scaledMatrix < 0){
+      console.error("Could not get the location of the attribute");
+      return -1;
+    }
+    gl.vertexAttribPointer(a_position,2,gl.FLOAT,false,0,0);
+    gl.uniformMatrix4fv(u_scaledMatrix,false, scaleMatrix);
+    gl.enableVertexAttribArray(a_position);
+    that.gl.drawArrays(that.gl.TRIANGLES,0,n);
+  }
 }
 
 
