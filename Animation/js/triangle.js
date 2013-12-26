@@ -49,14 +49,20 @@ Triangle.prototype.draw = function() {
 };
 
 Triangle.prototype.rotate = function (angleDegree,x,y,z) {
-    x = x || 0;
-    y = y || 0;
-    z = z || 0;
-    angleDegree = angleDegree || 0;
-    this.transforamtionMatrix.rotate(angleDegree,x,y,z);
-    this.currentAngle = angleDegree;
-    this.draw();
+  x = x || 0;
+  y = y || 0;
+  z = z || 0;
+  angleDegree = angleDegree || 0;
+  this.transforamtionMatrix.rotate(angleDegree,x,y,z);
+  this.currentAngle = angleDegree;
 };
+
+Triangle.prototype.scale = function (sx,sy,sz) {
+  sx = sx || 0;
+  sy = sy || 0;
+  sz = sz || 0;
+  this.transforamtionMatrix.scale(sx,sy,sz);
+}
 
 Triangle.prototype.setTranformationMatrix = function (newTransformationMatrix) {
     if (newTransformationMatrix && newTransformationMatrix instanceof Matrix4) {
