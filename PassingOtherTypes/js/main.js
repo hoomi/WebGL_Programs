@@ -11,8 +11,16 @@ function main() {
   	verticesAndSize = new Float32Array([
   		0.0, 0.5, 5.0,
   		0.5, 0.5, 10.0,
-  		0.5, -0.5, 20.0]);
+  		0.5, -0.5, 20.0
+  		]),
+  	verticesAndSizeAndColor = new Float32Array([
+  		0.0, 0.5, 5.0, 1.0, 0.0, 0.0, 1.0,
+  		0.5, 0.5, 10.0, 0.0, 1.0, 0.0, 1.0,
+  		0.5, -0.5, 20.0, 0.0, 0.0, 1.0, 1.0
+  		])
+  	;
 
   // webGl.drawPoint(vertices,pointSizes);
-  webGl.drawInterLeavingPoint(verticesAndSize);
+  // webGl.drawInterLeavingPoint(verticesAndSize);
+  webGl.drawColorPoints(verticesAndSizeAndColor);
 }
