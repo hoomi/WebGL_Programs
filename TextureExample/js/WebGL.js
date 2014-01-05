@@ -79,6 +79,7 @@ WebGL.prototype.initTexture = function(n) {
     return -1;
   }
   image.onload = function() {loadTexture(n,texture,u_Sampler,image);};
+  // The image needs to have the sizes with width and height power-2
   image.src = "images/ball.png";
 }
 
