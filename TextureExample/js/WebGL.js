@@ -58,7 +58,10 @@ WebGL.prototype.initTexture = function(n) {
     // Bind the texture object to the target
     that.gl.bindTexture(that.gl.TEXTURE_2D, texture);
     // Set the texture parameters
+    // Set texture parameters
     that.gl.texParameteri(that.gl.TEXTURE_2D, that.gl.TEXTURE_MIN_FILTER, that.gl.LINEAR);
+    that.gl.texParameteri(that.gl.TEXTURE_2D, that.gl.TEXTURE_WRAP_S, that.gl.CLAMP_TO_EDGE);
+    that.gl.texParameteri(that.gl.TEXTURE_2D, that.gl.TEXTURE_WRAP_T, that.gl.MIRRORED_REPEAT);
     // Set the texture image
     that.gl.texImage2D(that.gl.TEXTURE_2D, 0, that.gl.RGB, that.gl.RGB, that.gl.UNSIGNED_BYTE, image);
 
@@ -80,7 +83,7 @@ WebGL.prototype.initTexture = function(n) {
   }
   image.onload = function() {loadTexture(n,texture,u_Sampler,image);};
   // The image needs to have the sizes with width and height power-2
-  image.src = "images/ball.png";
+  image.src = "images/test.jpg";
 }
 
 WebGL.prototype.drawInterLeavingPoint = function(vertices) {
